@@ -1,0 +1,59 @@
+{
+	"SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings.md",
+	"SettingsVersion": 1.2,
+	"CameraDefaults": {
+      "CaptureSettings": [
+        {
+          "ImageType": 0,
+          "Width": 512,
+          "Height": 512,
+          "FOV_Degrees": 135,
+          "AutoExposureSpeed": 0,
+          "MotionBlurAmount": 0
+        },
+		{
+          "ImageType": 1,
+          "Width": 512,
+          "Height": 512,
+          "FOV_Degrees": 135
+        },
+		{
+          "ImageType": 2,
+          "Width": 512,
+          "Height": 512,
+          "FOV_Degrees": 135
+        },
+		{
+          "ImageType": 3,
+          "Width": 512,
+          "Height": 512,
+          "FOV_Degrees": 135
+        },
+		{
+          "ImageType": 4,
+          "Width": 512,
+          "Height": 512,
+          "FOV_Degrees": 135
+        },
+		{
+          "ImageType": 5,
+          "Width": 512,
+          "Height": 512,
+          "FOV_Degrees": 135
+        },
+		{
+          "ImageType": 6,
+          "Width": 512,
+          "Height": 512,
+          "FOV_Degrees": 135
+        },
+		{
+          "ImageType": 7,
+          "Width": 512,
+          "Height": 512,
+          "FOV_Degrees": 135
+        }
+		]	
+	},
+	"SimMode": "ComputerVision"
+}
