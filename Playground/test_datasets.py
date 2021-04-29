@@ -4,7 +4,6 @@ import datetime
 import cv2 as cv
 import numpy as np
 from cv_bridge import CvBridge, CvBridgeError
-from queue import Queue
 import numpy as np
 import pandas as pd
 
