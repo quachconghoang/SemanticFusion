@@ -5,8 +5,6 @@
 
 ./Airsim/airsim_drone
 *.o
-__init__.py
-
 
 # VSCODE
 .build/
