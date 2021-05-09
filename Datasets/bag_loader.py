@@ -67,12 +67,14 @@ class RosBagLoader:
             if topic == self.msg[1]:
                 self.img_1 = self.bridge.imgmsg_to_cv2(msg, self.img_type)
                 # self.img_prv[:, self.img_w:(self.img_w * 2)] = self.bridge.imgmsg_to_cv2(msg, self.img_type)
-            if topic == '/imu0':
-                # imu = msg
-                ...
             if topic == '/odometry':
                 odom = msg
 
-        return self.img_0, self.img_1, odom
+        return self.img_0, self.img_1, odom.pose.pose
 
+    def getImgCount(self):
+        return self._img_count
+
+    def loadTrajactory(self):
+        ...
     ...

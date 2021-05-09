@@ -11,6 +11,10 @@ VIODE = {
     'test_mode': True
 }
 
+OpenLORIS = {
+
+}
+
 TUMVI = {
     'msg': ['/cam0/image_raw', '/cam1/image_raw',
            '/imu0', '/vrpn_client/raw_transform'],
