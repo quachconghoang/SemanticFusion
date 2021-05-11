@@ -36,13 +36,17 @@ if __name__ == "__main__":
     # Sort them in the order of their distance.
     matches = sorted(matches, key=lambda x: x.distance)
     # Draw first 10 matches.
-    img3 = cv.drawMatches(l_img, kp1, r_img, kp2, matches[:10],
+    img3 = cv.drawMatches(l_img, kp1, r_img, kp2, matches[:1],
                           None, flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
     # plt.imshow(img3), plt.show()
     # l_img = cv.drawKeypoints(l_img, kp1, None, color=(0,255,0), flags=0)
     # r_img = cv.drawKeypoints(r_img, kp2, None, color=(0,0,255), flags=0)
     # img = np.concatenate((l_img, r_img), axis=1)
+
     cv.imshow('***', img3)
     cv.waitKey()
     cv.destroyAllWindows()
+
+    # https://towardsdatascience.com/depth-estimation-1-basics-and-intuition-86f2c9538cd1
+    # z = = (f*b)/d
