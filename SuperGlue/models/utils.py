@@ -512,8 +512,9 @@ def make_matching_plot_fast(image0, image1, kpts0, kpts1, mkpts0,
     color = (np.array(color[:, :3])*255).astype(int)[:, ::-1]
     for (x0, y0), (x1, y1), c in zip(mkpts0, mkpts1, color):
         c = c.tolist()
+        rc = (np.random.randint(32,196), np.random.randint(32,196), np.random.randint(32,196))
         cv2.line(out, (x0, y0), (x1 + margin + W0, y1),
-                 color=c, thickness=1, lineType=cv2.LINE_AA)
+                 color=rc, thickness=1, lineType=cv2.LINE_AA)
         # display line end-points as circles
         cv2.circle(out, (x0, y0), 2, c, -1, lineType=cv2.LINE_AA)
         cv2.circle(out, (x1 + margin + W0, y1), 2, c, -1,
