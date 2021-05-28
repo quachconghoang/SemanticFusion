@@ -26,3 +26,8 @@ TUMVI = {
     'test_mode': True
 }
 
+model_weights = {
+    'superpoint': str(Path.home())+ '/Datasets/Weights/superpoint_v1.pth',
+    'superglue_indoor': str(Path.home())+ '/Datasets/Weights/superglue_indoor.pth',
+    'superglue_outdoor': str(Path.home())+ '/Datasets/Weights/superglue_outdoor.pth',
+}
