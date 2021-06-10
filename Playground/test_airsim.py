@@ -25,7 +25,7 @@ if __name__ == "__main__":
     while key != 27:
         rLeft = client.simGetImages([
             airsim.ImageRequest("RGB_Left", airsim.ImageType.Scene, compress=_compress),
-            airsim.ImageRequest("RGB_Left", airsim.ImageType.DepthPlanner, pixels_as_float=True, compress=_compress),
+            airsim.ImageRequest("RGB_Left", airsim.ImageType.DepthPlanar, pixels_as_float=True, compress=_compress),
             airsim.ImageRequest("RGB_Left", airsim.ImageType.Segmentation, compress=_compress)
         ])
         rRight = client.simGetImages([airsim.ImageRequest("RGB_Right", airsim.ImageType.Scene)])
@@ -34,7 +34,7 @@ if __name__ == "__main__":
         o = pose.orientation
 
         imgL_0 = cv2.imdecode(airsim.string_to_uint8_array(rLeft[0].image_data_uint8), cv2.IMREAD_UNCHANGED)
-        imgR_0 = cv2.imdecode(airsim.string_to_uint8_array(rLeft[0].image_data_uint8), cv2.IMREAD_UNCHANGED)
+        imgR_0 = cv2.imdecode(airsim.string_to_uint8_array(rRight[0].image_data_uint8), cv2.IMREAD_UNCHANGED)
         img = np.concatenate((imgL_0, imgR_0), axis=1)
         cv2.imshow('***', img)
         key = cv2.waitKey(1)
