@@ -1,6 +1,7 @@
 {
 	"SettingsVersion": 1.2,
 	"SimMode": "Multirotor",
+	"ClockSpeed": 1.0,
 	"CameraDefaults": {
 		"CaptureSettings": [
 		  {	"ImageType": 0,	"Width": 640,	"Height": 400,	"FOV_Degrees": 124  },
