@@ -14,7 +14,7 @@ from nav_msgs.msg import Odometry
 from cv_bridge import CvBridge, CvBridgeError
 
 
-f_c = 140.278766973
+f_c = 170.147 # 170.147018132
 c_x = 320
 c_y = 200
 img_w = 640
@@ -28,7 +28,7 @@ client.confirmConnection()
 
 rospy.init_node('writer', anonymous=True)
 bridge = CvBridge()
-bag = rosbag.Bag('/home/hoangqc/Datasets/test.bag', 'w')
+bag = rosbag.Bag('/home/hoangqc/Datasets/NH-base-5ms.bag', 'w')
 
 ctime = Time.now()
 # ctime_sec = ctime.to_sec()
@@ -61,18 +61,30 @@ def getIMU_message(imu_data, pose_gt, count = 0, time=Time.now()):
     m_Imu.linear_acceleration.y = imu_data.linear_acceleration.y_val
     m_Imu.linear_acceleration.z = imu_data.linear_acceleration.z_val
 
-    m_Pose = Odometry()
+    m_Odom = Odometry()
+    m_Odom.header.seq = count
+    m_Odom.header.stamp.set(time.secs, time.nsecs)
+    m_Odom.pose.pose.position.x = pose_gt.position.x_val
+    m_Odom.pose.pose.position.y = pose_gt.position.y_val
+    m_Odom.pose.pose.position.z = pose_gt.position.z_val
+    m_Odom.pose.pose.orientation.w = pose_gt.orientation.w_val
+    m_Odom.pose.pose.orientation.x = pose_gt.orientation.x_val
+    m_Odom.pose.pose.orientation.y = pose_gt.orientation.y_val
+    m_Odom.pose.pose.orientation.z = pose_gt.orientation.z_val
+
+    m_Pose = PoseStamped()
     m_Pose.header.seq = count
     m_Pose.header.stamp.set(time.secs, time.nsecs)
-    m_Pose.pose.pose.position.x = pose_gt.position.x_val
-    m_Pose.pose.pose.position.y = pose_gt.position.y_val
-    m_Pose.pose.pose.position.z = pose_gt.position.z_val
-    m_Pose.pose.pose.orientation.w = pose_gt.orientation.w_val
-    m_Pose.pose.pose.orientation.x = pose_gt.orientation.x_val
-    m_Pose.pose.pose.orientation.y = pose_gt.orientation.y_val
-    m_Pose.pose.pose.orientation.z = pose_gt.orientation.z_val
+    m_Pose.pose.position.x = pose_gt.position.x_val
+    m_Pose.pose.position.y = pose_gt.position.y_val
+    m_Pose.pose.position.z = pose_gt.position.z_val
+    m_Pose.pose.orientation.w = pose_gt.orientation.w_val
+    m_Pose.pose.orientation.x = pose_gt.orientation.x_val
+    m_Pose.pose.orientation.y = pose_gt.orientation.y_val
+    m_Pose.pose.orientation.z = pose_gt.orientation.z_val
 
-    return m_Imu,m_Pose
+
+    return m_Imu, m_Odom, m_Pose
     ...
 
 def getBinocularImg(count = 0, time=Time.now(), need_compress = False):
@@ -150,10 +162,11 @@ if __name__ == "__main__":
             imu_data = client.getImuData(imu_name="IMU", vehicle_name="CVFlight")
             pose_gt = client.simGetVehiclePose("CVFlight")
 
-            imu_msg, pose_msg = getIMU_message(imu_data=imu_data, pose_gt=pose_gt, count=count_IMU,time=imu_Time)
+            imu_msg, odom_msg, pose_msg = getIMU_message(imu_data=imu_data, pose_gt=pose_gt, count=count_IMU, time=imu_Time)
 
             bag.write(topic='/imu0', msg=imu_msg, t=imu_Time)
-            bag.write(topic='/odometry', msg=pose_msg, t=imu_Time)
+            bag.write(topic='/groundtruth/odometry', msg=odom_msg, t=imu_Time)
+            bag.write(topic='/groundtruth/pose', msg=pose_msg, t=imu_Time)
             print('GetIMU: ', count_IMU)
             count_IMU += 1
             client.simContinueForTime(seconds=interval_IMU)
