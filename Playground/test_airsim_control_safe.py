@@ -13,6 +13,10 @@ client.enableApiControl(True)
 # client.simEnableWeather(True)
 # client.simSetWeatherParameter(airsim.WeatherParameter.Fog, 0.25)
 
+p = airsim.Pose(airsim.Vector3r(135, 0, 0), airsim.to_quaternion(0, 0, 0))
+client.simSetVehiclePose(pose=p,ignore_collision=True)
+time.sleep(1)
+
 print("arming the drone...")
 client.armDisarm(True)
 
@@ -22,7 +26,6 @@ if state.landed_state == airsim.LandedState.Landed:
     client.takeoffAsync().join()
 else:
     client.hoverAsync().join()
-
 time.sleep(1)
 
 state = client.getMultirotorState()
@@ -51,6 +54,11 @@ path_NH_0=[airsim.Vector3r(125,0,z),
        airsim.Vector3r(0,-25,z)]
 
 # path_NH_1=[airsim.Vector3r(125,0,z)]
+
+# path_BD_0=[airsim.Vector3r(0,-8,z),
+#            airsim.Vector3r(-8,-8,z),
+#            airsim.Vector3r(-8,0,z),
+#            airsim.Vector3r(0,0,z)]
 
 result = client.moveOnPathAsync(path_NH_0, velocity=speed, timeout_sec=600,
         drivetrain=airsim.DrivetrainType.ForwardOnly, yaw_mode=airsim.YawMode(False,0), lookahead=20, adaptive_lookahead=1).join()

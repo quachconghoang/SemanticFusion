@@ -28,7 +28,7 @@ client.confirmConnection()
 
 rospy.init_node('writer', anonymous=True)
 bridge = CvBridge()
-bag = rosbag.Bag('/home/hoangqc/Datasets/NH-base-5ms.bag', 'w')
+bag = rosbag.Bag('/home/hoangqc/Datasets/NH-baseline1m-5ms.bag', 'w')
 
 ctime = Time.now()
 # ctime_sec = ctime.to_sec()
@@ -41,6 +41,7 @@ interval_img = 0.05
 def waitForTakeOff():
     is_flying = client.getMultirotorState().landed_state
     while is_flying==0:
+        # pose_gt = client.simGetVehiclePose("CVFlight")
         is_flying = client.getMultirotorState().landed_state
     print("taking off !!!!!!!!!!!!!!!!!!")
     # client.simContinueForTime()
