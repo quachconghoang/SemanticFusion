@@ -12,6 +12,8 @@ client.confirmConnection()
 client.enableApiControl(True)
 # client.simEnableWeather(True)
 # client.simSetWeatherParameter(airsim.WeatherParameter.Fog, 0.25)
+# client.simSetTimeOfDay(is_enabled, start_datetime = "", is_start_datetime_dst = False, celestial_clock_speed = 1, update_interval_secs = 60, move_sun = True)
+
 
 print("arming the drone...")
 client.armDisarm(True)
