@@ -77,7 +77,7 @@ def reload_with_MSCKF_Estimation(rgb_left, rgb_right, depth_left,
     data_ids = np.loadtxt(fname = save_dir + 'data_id.txt').astype(np.int32)
 
     # Trace start id in estimation
-    base_time = datetime.datetime(year=2022, month=2, day=22, hour=22, minute=22, second=22).timestamp()
+    base_time = pose_gt[0][0]
     est_time = pose_est[0][0]
     start_id = np.round((est_time - base_time)*1000/50).astype(np.int32)
 

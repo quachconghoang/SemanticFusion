@@ -170,32 +170,32 @@ def getMatchPrecision(src_id, tar_id):
 
     return evalScores(pts0, pts1, matches, kp0_gt, kp0_valid, thresh=1.2)
 
-step = 10
-src_id = 0
-last_id = len(files_rgb_left)
-total_rs = []
-
-while (src_id+20)<last_id:
-    # p1,r1,f1 = getMatchPrecision(src_id,src_id + 5)
-    # p2,r2,f2 = getMatchPrecision(src_id, src_id + 10)
-    p4,r4,f4,kp4 = getMatchPrecision(src_id, src_id + 20)
-
-    # rs = [p1,r1,f1,p2,r2,f2,p4,r4,f4]
-    # total_rs.append(rs)
-
-    rs = [p4,r4,f4,kp4]
-    total_rs.append(rs)
-    src_id+=step
-
-# np.savetxt(fname = 'office_004_hg3d.txt', X=np.asarray(total_rs), header='p1 r1 p2 r2 p4 r4 #steps=[5_10_20]')
-# np.savetxt(fname = 'office_004_sh3d.txt', X=np.asarray(total_rs), header='p1 r1 p2 r2 p4 r4 #steps=[5_10_20]')
-# np.savetxt(fname = 'neighborhood_000_hg3d.txt', X=np.asarray(total_rs), header='p1 r1 p2 r2 p4 r4 #steps=[5_10_20]')
-# np.savetxt(fname = 'neighborhood_000_sh3d.txt', X=np.asarray(total_rs), header='p1 r1 p2 r2 p4 r4 #steps=[5_10_20]')
-
-rs_np = np.asarray(total_rs)
-
-p = rs_np[:,0];    r = rs_np[:,1];    f = rs_np[:,2];   kp = rs_np[:,3];
-print('Match 20-step: ', p[p!=0].mean(), r[r!=0].mean(), f[f!=0].mean())
+# step = 10
+# src_id = 0
+# last_id = len(files_rgb_left)
+# total_rs = []
+#
+# while (src_id+20)<last_id:
+#     # p1,r1,f1 = getMatchPrecision(src_id,src_id + 5)
+#     # p2,r2,f2 = getMatchPrecision(src_id, src_id + 10)
+#     p4,r4,f4,kp4 = getMatchPrecision(src_id, src_id + 20)
+#
+#     # rs = [p1,r1,f1,p2,r2,f2,p4,r4,f4]
+#     # total_rs.append(rs)
+#
+#     rs = [p4,r4,f4,kp4]
+#     total_rs.append(rs)
+#     src_id+=step
+#
+# # np.savetxt(fname = 'office_004_hg3d.txt', X=np.asarray(total_rs), header='p1 r1 p2 r2 p4 r4 #steps=[5_10_20]')
+# # np.savetxt(fname = 'office_004_sh3d.txt', X=np.asarray(total_rs), header='p1 r1 p2 r2 p4 r4 #steps=[5_10_20]')
+# # np.savetxt(fname = 'neighborhood_000_hg3d.txt', X=np.asarray(total_rs), header='p1 r1 p2 r2 p4 r4 #steps=[5_10_20]')
+# # np.savetxt(fname = 'neighborhood_000_sh3d.txt', X=np.asarray(total_rs), header='p1 r1 p2 r2 p4 r4 #steps=[5_10_20]')
+#
+# rs_np = np.asarray(total_rs)
+#
+# p = rs_np[:,0];    r = rs_np[:,1];    f = rs_np[:,2];   kp = rs_np[:,3];
+# print('Match 20-step: ', p[p!=0].mean(), r[r!=0].mean(), f[f!=0].mean())
 
 # print('Average: ', rs_np[:,0].mean(), rs_np[:,1].mean(), rs_np[:,2].mean())
 # print('Sinkhorn: ', )
@@ -214,80 +214,80 @@ print('Match 20-step: ', p[p!=0].mean(), r[r!=0].mean(), f[f!=0].mean())
 
 
 
-# source = getFrameInfo(30*5) # 32*5
-# target = getFrameInfo(34*5) # 36*5
-# motion = np.linalg.inv(source['transform']).dot(target['transform'])
-# # motion_gt = np.linalg.inv(pose_gt_mat44[30*5]).dot(pose_gt_mat44[34*5])
-#
-# generate3D(source)
-# src_p3d = source['point3D']
-# target_cam = PinholeCameraCal3_S2(Pose3(target['transform']), K)
-#
-# pts0 = getSuperPoints_v2(cv.cvtColor(source['color'], cv.COLOR_RGB2GRAY))
-# pts1 = getSuperPoints_v2(cv.cvtColor(target['color'], cv.COLOR_RGB2GRAY))
-# desc0 = pts0['desc']
-# desc1 = pts1['desc']
-#
-# norm_self_src = np.sqrt(2 - 2 * np.clip(np.dot(desc0.T, desc0), -1, 1))
-# norm_self_tar = np.sqrt(2 - 2 * np.clip(np.dot(desc1.T, desc1), -1, 1))
-# norm_cross = np.sqrt(2 - 2 * np.clip(np.dot(desc0.T, desc1), -1, 1))
-#
-# # get stereo map
-# src_disparity = getDisparityTartanAIR(source['color'], source['color_right'])
-# # showDepth(src_disparity)
-#
-# kp0 = pts0['pts']
-# kp1 = pts1['pts']
-# kp0_3d = get3DLocalFromDisparity(kp0, src_disparity)
-#
-# num_detected = pts0['pts'].shape[0]
-# kp0_gt, kp0_valid = getPointsProject2D(pts_2d=pts0['pts'], pts_3d=source['point3D'], target_cam=target_cam)
-# cam_target_predicted = PinholeCameraCal3_S2(Pose3(motion), K)
-#
-# extr = camExtr[:3,:3] # for convert global point to cam points  -> z-forward
-# inv_extr = inv_camExtr[:3,:3] # for convert cam (z-forward) to NED -> z-down
-#
-# kp0_expect = []
-# for pt3d in kp0_3d:
-#     pt2d = cal_Point_Project_General(cam_target_predicted, pt3d, extr)
-#     kp0_expect.append(pt2d)
-# kp0_expect = np.asarray(kp0_expect)
-#
-# #gen distance-table
-# map = np.zeros(shape=[kp0.shape[0], kp1.shape[0]])
-# std = 64
-# for i,p0_e in enumerate(kp0_expect):
-#     for j,p1 in enumerate(kp1):
-#         map[i,j] = np.sqrt(np.linalg.norm(p0_e - p1)/std)
-#
-# ### Get Sinkhorn Map
-# a, b = [], []
-# for pt_his in norm_self_src:
-#     a.append(pt_his.mean() - 1)
-# for pt_his in norm_self_tar:
-#     b.append(pt_his.mean() - 1)
-# Gs = ot.sinkhorn(a, b, norm_cross, reg=1e-1, numItermax=20)
-#
-# ### Simple Sinkhorn
-# # matches = hungarianMatch(norm_cross = (1-Gs))
-#
-# ### Sinkhorn with 3D project map
-# match_id = linear_sum_assignment(cost_matrix = (1-Gs)+map)
+source = getFrameInfo(32*5) # 32*5
+target = getFrameInfo(36*5) # 36*5
+motion = np.linalg.inv(source['transform']).dot(target['transform'])
+# motion_gt = np.linalg.inv(pose_gt_mat44[30*5]).dot(pose_gt_mat44[34*5])
+
+generate3D(source)
+src_p3d = source['point3D']
+target_cam = PinholeCameraCal3_S2(Pose3(target['transform']), K)
+
+pts0 = getSuperPoints_v2(cv.cvtColor(source['color'], cv.COLOR_RGB2GRAY))
+pts1 = getSuperPoints_v2(cv.cvtColor(target['color'], cv.COLOR_RGB2GRAY))
+desc0 = pts0['desc']
+desc1 = pts1['desc']
+
+norm_self_src = np.sqrt(2 - 2 * np.clip(np.dot(desc0.T, desc0), -1, 1))
+norm_self_tar = np.sqrt(2 - 2 * np.clip(np.dot(desc1.T, desc1), -1, 1))
+norm_cross = np.sqrt(2 - 2 * np.clip(np.dot(desc0.T, desc1), -1, 1))
+
+# get stereo map
+src_disparity = getDisparityTartanAIR(source['color'], source['color_right'])
+# showDepth(src_disparity)
+
+kp0 = pts0['pts']
+kp1 = pts1['pts']
+kp0_3d = get3DLocalFromDisparity(kp0, src_disparity)
+
+num_detected = pts0['pts'].shape[0]
+kp0_gt, kp0_valid = getPointsProject2D(pts_2d=pts0['pts'], pts_3d=source['point3D'], target_cam=target_cam)
+cam_target_predicted = PinholeCameraCal3_S2(Pose3(motion), K)
+
+extr = camExtr[:3,:3] # for convert global point to cam points  -> z-forward
+inv_extr = inv_camExtr[:3,:3] # for convert cam (z-forward) to NED -> z-down
+
+kp0_expect = []
+for pt3d in kp0_3d:
+    pt2d = cal_Point_Project_General(cam_target_predicted, pt3d, extr)
+    kp0_expect.append(pt2d)
+kp0_expect = np.asarray(kp0_expect)
+
+#gen distance-table
+map = np.zeros(shape=[kp0.shape[0], kp1.shape[0]])
+std = 64
+for i,p0_e in enumerate(kp0_expect):
+    for j,p1 in enumerate(kp1):
+        map[i,j] = np.sqrt(np.linalg.norm(p0_e - p1)/std)
+
+### Get Sinkhorn Map
+a, b = [], []
+for pt_his in norm_self_src:
+    a.append(pt_his.mean() - 1)
+for pt_his in norm_self_tar:
+    b.append(pt_his.mean() - 1)
+Gs = ot.sinkhorn(a, b, norm_cross, reg=1e-1, numItermax=20)
+
+### Simple Sinkhorn
+# matches = hungarianMatch(norm_cross = (1-Gs))
+
+### Sinkhorn with 3D project map
+match_id = linear_sum_assignment(cost_matrix = (1-Gs)+map)
+match_score = norm_cross[match_id]
+matches = np.stack((match_id[0], match_id[1], match_score), axis=1)
+
+### Hungarian with 3D map
+# match_id = linear_sum_assignment(cost_matrix = norm_cross+map)
 # match_score = norm_cross[match_id]
 # matches = np.stack((match_id[0], match_id[1], match_score), axis=1)
-#
-# ### Hungarian with 3D map
-# # match_id = linear_sum_assignment(cost_matrix = norm_cross+map)
-# # match_score = norm_cross[match_id]
-# # matches = np.stack((match_id[0], match_id[1], match_score), axis=1)
-#
-#
-# # Hungarian_Thresh = 0.7
-# # Sinkhorn_Thresh = 0.75 -> best precision; 0.95 best F1; 1.0 best Recall
-# # Hungarian_3D = 0.9
-# # Sinkhorn_3D = 0.9
-#
-# evalScores(pts0,pts1,matches,kp0_gt,kp0_valid,thresh=.9)
+
+
+# Hungarian_Thresh = 0.7
+# Sinkhorn_Thresh = 0.75 -> best precision; 0.95 best F1; 1.0 best Recall
+# Hungarian_3D = 0.9
+# Sinkhorn_3D = 0.9
+
+evalScores(pts0,pts1,matches,kp0_gt,kp0_valid,thresh=.9)
 
 # 32-> 36 best:
 # Sinkhorn only: Precision =  0.9746835443037974 ; Recall =  0.27898550724637683 ; F1 =  0.4338028169014085
