@@ -134,7 +134,6 @@ def getMatchPrecision(source_id,target_id):
 
 step = 2
 src_id = 0
-tar_id = src_id+step
 last_id = len(files_rgb_left)
 total_rs = []
 

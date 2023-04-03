@@ -87,7 +87,7 @@ def convertBags(_pathTartan, _pathBag, _bagName = '0x.bag'):
     bag.close()
 
 def convertPoseSequence(poses, offset = 0):
-    start_time = datetime.datetime(year=2022, month=2, day=22, hour=22, minute=22, second=22)
+    start_time = datetime.datetime(year=2023, month=3, day=23, hour=23, minute=23, second=23)
 
     initSecs = 2
     fps = 20

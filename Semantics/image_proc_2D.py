@@ -61,7 +61,6 @@ from config import *
 from Semantics.SuperGlue.demo_superpoint import SuperPointFrontend
 from Semantics.SuperGlue.models.matching import Matching
 from Semantics.SuperGlue.models.utils import frame2tensor
-from Semantics.ssc import ssc, ssc_np_index
 
 torch.set_grad_enabled(False)
 # superpointFrontend = SuperPointFrontend(weights_path=model_weights['superpoint'],
@@ -69,32 +68,6 @@ torch.set_grad_enabled(False)
 #                         nn_thresh=0.7, cuda=torch.cuda.is_available())
 
 matching = Matching(dnn_config).eval().to(dnn_device)
-
-# def getSuperPointsANMS(img):
-#     pts, desc = superpointFrontend.run_none_nms((img / 255.0).astype('float32'))
-#     ids = ssc_np_index(pts,1000,0.01,640,480)
-#     pts_new = pts[:,ids]
-#     desc_new = desc[:,ids]
-#     kps = []
-#     for i in range(pts_new.shape[1]):
-#         p = cv.KeyPoint(x=pts_new[0][i], y=pts_new[1][i], size=8, response=pts_new[2][i])
-#         kps.append(p)
-#     return kps, pts_new.T, desc_new.T
-
-# def getSuperPoints(img, max=-1):
-#     pts, desc, heatmap = superpointFrontend.run((img / 255.0).astype('float32'))
-#     kpcv = []
-#     scores = pts[2]
-#     len = pts.shape[1]
-#     if ((max > 0) & (len > max)) : len = max
-#     for i in range(len):
-#         p = cv.KeyPoint(x=pts[0][i], y=pts[1][i], size=8, response=pts[2][i])
-#         kpcv.append(p)
-#     rs = { 'pts_cv': kpcv,
-#            'pts': pts,
-#            'scores': scores,
-#            'desc':desc}
-#     return rs
 
 def getSuperPoints_v2(src_gray):
     # src_gray_x2 = cv.resize(src_gray, (320, 240), interpolation=cv.INTER_AREA)

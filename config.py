@@ -59,10 +59,7 @@ if platform == 'darwin':
     dnn_device = 'cpu'
 
 TartanAir_rootDIRS = [  '/home/hoangqc/Datasets/TartanAir/',
-                        '/media/citlab/DATA/TartanAir/',
-                        'F:/TartanAir/',
-                        '/mnt/c/Users/hoangqc/Desktop/ws/TartanAir/',
-                        '/Users/hoangqc/Datasets/TartanAir/',
+                        '/media/hoangqc/Expansion/Datasets/TartanAir/',
                         '...'   ]
 
 TartanAir_scenarios = ['abandonedfactory', 'abandonedfactory_night', 'amusement', 'carwelding',
@@ -73,4 +70,4 @@ TartanAir_scenarios = ['abandonedfactory', 'abandonedfactory_night', 'amusement'
 
 TartanAir_levels = ['Easy', 'Hard']
 
-TartanAir_bag_st = datetime.datetime(year=2022, month=2, day=22, hour=22, minute=22, second=22).timestamp()
+TartanAir_bag_st = datetime.datetime(year=2023, month=3, day=23, hour=23, minute=23, second=23).timestamp()
