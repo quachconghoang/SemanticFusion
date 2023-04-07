@@ -65,12 +65,12 @@ def getDataLists(dir='', skip=1):
     return files_rgb_left, files_rgb_right, files_depth_left, poselist
 
 ### LOAD ESTIMATION ###
-def reload_with_MSCKF_Estimation(rgb_left, rgb_right, depth_left,
-                                 msckf_dir = str(Path.home())+'/catkin_ws/tmp/sim/',
-                                 seq_name = 'office_004'):
+# def reload_with_MSCKF_Estimation(rgb_left, rgb_right, depth_left,
+#                                  msckf_dir = str(Path.home())+'/catkin_ws/tmp/sim/',
+#                                  seq_name = 'office_004'):
+def reload_with_MSCKF_Estimation(rgb_left, rgb_right, depth_left, save_dir):
     # seq_name = 'office_004'
     # save_dir = str(Path.home()) + '/catkin_ws/tmp/sim/' + 'office_004' + '/'
-    save_dir = msckf_dir + seq_name + '/'
     # Load Raw
     pose_est = np.loadtxt(fname = save_dir + 'pose_est.txt')[:,:8]
     pose_gt = np.loadtxt(fname = save_dir + 'pose_gt.txt')[:,:8]
@@ -103,7 +103,14 @@ def reload_with_MSCKF_Estimation(rgb_left, rgb_right, depth_left,
     depth_left = [depth_left[i] for i in data_ids]
     rgb_right = [rgb_right[i] for i in data_ids]
 
-    return pose_est_mat44, pose_gt_mat44, rgb_left,rgb_right,depth_left
+    #cut-last
+    offset_10 = 10 - start_id%10
+    # print(10 - start_id%10)
+    # return pose_est_mat44, pose_gt_mat44, rgb_left,rgb_right,depth_left
+    return pose_est_mat44[offset_10:], pose_gt_mat44[offset_10:], \
+        rgb_left[offset_10:], rgb_right[offset_10:], \
+        depth_left[offset_10:]
+
 
 
 def getVisualizationBB(maxX=10, maxY=10, maxZ=2, minX=-10, minY=-10, minZ=-2):

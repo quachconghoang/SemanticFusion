@@ -166,15 +166,6 @@ while (src_id+20)<last_id:
     src_id+=step
 
 rs_np = np.asarray(total_rs)
-
-# p1 = rs_np[:,0];    r1 = rs_np[:,1];    f1 = rs_np[:,2]
-# p2 = rs_np[:,3];    r2 = rs_np[:,4];    f2 = rs_np[:,5]
-# p4 = rs_np[:,6];    r4 = rs_np[:,7];    f4 = rs_np[:,8]
-#
-# print('Match 05-step: ', p1[p1!=0].mean(), r1[r1!=0].mean(), f1[f1!=0].mean())
-# print('Match 10-step: ', p2[p2!=0].mean(), r2[r2!=0].mean(), f2[f2!=0].mean())
-# print('Match 20-step: ', p4[p4!=0].mean(), r4[r4!=0].mean(), f4[f4!=0].mean())
-
 p1 = rs_np[:,0];    r1 = rs_np[:,1];    f1 = rs_np[:,2]
 print('Match 20-step: ', p1[p1!=0].mean(), r1[r1!=0].mean(), f1[f1!=0].mean())
 

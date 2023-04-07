@@ -1,3 +1,4 @@
+import os
 import sys
 sys.path.append('../')
 
@@ -18,6 +19,8 @@ from SlamUtils.Loader.TartanAir import rootDIR, getDataSequences, getDataLists, 
 
 from Semantics.utils import camExtr, camIntr, getPoint3D
 
+import pandas as pd
+
 K = Cal3_S2(320, 320, 0.0, 320, 240)
 files_rgb_left, files_rgb_right, files_depth_left, poses_quad, poses_mat44 = [], [], [], [], []
 
@@ -30,7 +33,7 @@ with open(rootDIR + 'tartanair_data.json', 'r') as fp:
 
 def getFrameInfo(id):
     frame = {   'color': io.imread(files_rgb_left[id]),
-                # 'color_right': io.imread(files_rgb_right[id]),
+                'color_right': io.imread(files_rgb_right[id]),
                 'depth': np.load(files_depth_left[id]),
                 'transform': poses_mat44[id],
                 'intr': camIntr,
@@ -84,13 +87,19 @@ def getMatchPrecision(source_id,target_id):
             kpt0_valid.append(False)
 
 
+    if kpt0_valid.count(True) == 0:
+        # print('BAD Overlap !')
+        return 0,0,0
+
     match_state = []
+
     for id0, id1 in enumerate(matches):
         p0_gt = kpt0_gt[int(id0)]
         valid = kpt0_valid[int(id0)]
-        p1 = kpts1[int(id1)]
-        dis = np.linalg.norm(p0_gt - p1)
+
         if (id1 > -1):
+            p1 = kpts1[int(id1)]
+            dis = np.linalg.norm(p0_gt - p1)
             if (dis < 8):
                 match_state.append('TRUE')
             else:
@@ -112,22 +121,18 @@ def getMatchPrecision(source_id,target_id):
     # print('Precision = ', precision, '; Recall = ', recall,  '; F1 = ', f1)
     return precision, recall, f1
 
-# paths = []
-# paths.extend(db['office']['Easy'])
-# paths.extend(db['office']['Hard'])
-
-for path in db['office']['Hard']:
-
-    files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path, skip=5)
-    poses_mat44 = pos_quats2SE_matrices(poses_quad)
+def traceSquence(sce,lvl,traj):
+    path = os.path.join(rootDIR, sce, lvl, traj, '')
+    # print(path)
+    print_name = sce + '_' + lvl + '_' + traj
 
     step = 2
     src_id = 0
     last_id = len(files_rgb_left)
-
     total_rs = []
 
     while (src_id + 4) < last_id:
+        # print(src_id)
         p4, r4, f4 = getMatchPrecision(src_id, src_id + 4)
         rs = [p4, r4, f4]
         total_rs.append(rs)
@@ -138,6 +143,47 @@ for path in db['office']['Hard']:
     r4 = rs_np[:, 1]
     f4 = rs_np[:, 2]
 
-    print(path)
-    print('Match 20-step:',  '%6f' % p4[p4 != 0].mean(), '%6f' % r4[r4 != 0].mean(), '%6f' % f4[f4 != 0].mean())
+    print(print_name, '%6f' % p4[p4 != 0].mean(), '%6f' % r4[r4 != 0].mean(), '%6f' % f4[f4 != 0].mean())
 
+    ...
+
+keys = db['keys']
+levels = db['levels']
+est_rs = {}
+names = []
+f1 = []
+for sce in keys:
+    for lv in levels:
+        trajs = db[sce][lv]
+        for traj in trajs:
+            path = os.path.join(rootDIR, sce, lv, traj, '')
+            files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path, skip=5)
+            poses_mat44 = pos_quats2SE_matrices(poses_quad)
+            traceSquence(sce,lv,traj)
+    print('----------')
+
+# for traj in db['office']['Hard']:
+#     path = os.path.join(rootDIR,'office','Hard', traj, '')
+#     files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path, skip=5)
+#     poses_mat44 = pos_quats2SE_matrices(poses_quad)
+#
+#     step = 2
+#     src_id = 0
+#     last_id = len(files_rgb_left)
+#
+#     total_rs = []
+#
+#     while (src_id + 4) < last_id:
+#         p4, r4, f4 = getMatchPrecision(src_id, src_id + 4)
+#         rs = [p4, r4, f4]
+#         total_rs.append(rs)
+#         src_id += step
+#
+#     rs_np = np.asarray(total_rs)
+#     p4 = rs_np[:, 0]
+#     r4 = rs_np[:, 1]
+#     f4 = rs_np[:, 2]
+#
+#     print(path)
+#     print('Match 20-step:',  '%6f' % p4[p4 != 0].mean(), '%6f' % r4[r4 != 0].mean(), '%6f' % f4[f4 != 0].mean())
+#

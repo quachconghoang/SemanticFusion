@@ -173,40 +173,40 @@ def traceSquence(sce,lvl,traj):
     print(print_name, '%6f' % p4[p4 != 0].mean(), '%6f' % r4[r4 != 0].mean(), '%6f' % f4[f4 != 0].mean())
 
 
-# keys = db['keys']
-# levels = db['levels']
-# sce = 'abandonedfactory'
-# for lv in levels:
-#     trajs = db[sce][lv]
-#     for traj in trajs:
-#         path = os.path.join(rootDIR, sce, lv, traj, '')
-#         save_dir = os.path.join(rootDIR, '..', 'TartanAir_Bag', sce, lv, traj, '')
-#         files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path)
-#         poses_mat44 = pos_quats2SE_matrices(poses_quad)
-#         if os.path.exists(os.path.join(save_dir, 'pose_est.txt')) == False:
-#             continue  # SKIP ...
-#
-#         pose_est_mat44, pose_gt_mat44, \
-#         files_rgb_left, files_rgb_right, \
-#         files_depth_left = reload_with_MSCKF_Estimation(files_rgb_left, files_rgb_right, \
-#                                                         files_depth_left, save_dir=save_dir)
-#         traceSquence(sce, lv, traj)
-#     print('----------')
-
-
+keys = db['keys']
+levels = db['levels']
 sce = 'abandonedfactory'
-lv = 'Hard'
-trajs = db[sce][lv]
-for traj in trajs:
-    path = os.path.join(rootDIR, sce, lv, traj, '')
-    save_dir = os.path.join(rootDIR, '..', 'TartanAir_Bag', sce, lv, traj, '')
-    files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path)
-    poses_mat44 = pos_quats2SE_matrices(poses_quad)
-    if os.path.exists(os.path.join(save_dir, 'pose_est.txt')) == False:
-        continue  # SKIP ...
+for lv in levels:
+    trajs = db[sce][lv]
+    for traj in trajs:
+        path = os.path.join(rootDIR, sce, lv, traj, '')
+        save_dir = os.path.join(rootDIR, '..', 'TartanAir_Bag', sce, lv, traj, '')
+        files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path)
+        poses_mat44 = pos_quats2SE_matrices(poses_quad)
+        if os.path.exists(os.path.join(save_dir, 'pose_est.txt')) == False:
+            continue  # SKIP ...
 
-    pose_est_mat44, pose_gt_mat44, \
-    files_rgb_left, files_rgb_right, \
-    files_depth_left = reload_with_MSCKF_Estimation(files_rgb_left, files_rgb_right, \
-                                                    files_depth_left, save_dir=save_dir)
-    traceSquence(sce, lv, traj)
+        pose_est_mat44, pose_gt_mat44, \
+        files_rgb_left, files_rgb_right, \
+        files_depth_left = reload_with_MSCKF_Estimation(files_rgb_left, files_rgb_right, \
+                                                        files_depth_left, save_dir=save_dir)
+        traceSquence(sce, lv, traj)
+    print('----------')
+
+
+# sce = 'abandonedfactory'
+# lv = 'Hard'
+# trajs = db[sce][lv]
+# for traj in trajs:
+#     path = os.path.join(rootDIR, sce, lv, traj, '')
+#     save_dir = os.path.join(rootDIR, '..', 'TartanAir_Bag', sce, lv, traj, '')
+#     files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path)
+#     poses_mat44 = pos_quats2SE_matrices(poses_quad)
+#     if os.path.exists(os.path.join(save_dir, 'pose_est.txt')) == False:
+#         continue  # SKIP ...
+#
+#     pose_est_mat44, pose_gt_mat44, \
+#     files_rgb_left, files_rgb_right, \
+#     files_depth_left = reload_with_MSCKF_Estimation(files_rgb_left, files_rgb_right, \
+#                                                     files_depth_left, save_dir=save_dir)
+#     traceSquence(sce, lv, traj)
