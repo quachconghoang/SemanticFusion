@@ -59,6 +59,7 @@ if platform == 'darwin':
     dnn_device = 'cpu'
 
 TartanAir_rootDIRS = [  '/home/hoangqc/Datasets/TartanAir/',
+                        '/media/hoangqc/DATA/TartanAir/',
                         '/media/hoangqc/Expansion/Datasets/TartanAir/',
                         '...'   ]
 

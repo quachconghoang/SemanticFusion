@@ -70,7 +70,7 @@ def evalScores(pts0,pts1,matches, kp0_gt,kp0_valid, thresh=.9):
         precision = match_state.count('TRUE')/(match_state.count('TRUE')+match_state.count('FALSE'))
         recall = match_state.count('TRUE')/(match_state.count('TRUE')+match_state.count('SKIP_BUT_VALID'))
         f1 = 2*precision*recall/(precision+recall)
-    print('Precision = ', precision, '; Recall = ', recall, '; F1 = ', f1)
+    # print('Precision = ', precision, '; Recall = ', recall, '; F1 = ', f1)
     return precision, recall, f1
 
 def getMatchPrecision_Anchor(src_id, tar_id):
@@ -159,8 +159,8 @@ def traceSquence(sce,lvl,traj):
     last_id = len(files_rgb_left)
     total_rs = []
 
-    while (src_id + 20) < last_id:
-        print(src_id, '->', src_id+20)
+    while (src_id + 4) < last_id:
+        # print(src_id, '->', src_id+4)
         p4, r4, f4 = getMatchPrecision_Anchor(src_id, src_id + 4)
         rs = [p4, r4, f4]
         total_rs.append(rs)
@@ -177,13 +177,23 @@ levels = db['levels']
 est_rs = {}
 names = []
 f1 = []
-sce = 'abandonedfactory'
-for lv in levels:
-    trajs = db[sce][lv]
-    for traj in trajs:
-        path = os.path.join(rootDIR, sce, lv, traj, '')
-        save_dir = os.path.join(rootDIR, '..', 'TartanAir_Bag', sce, lv, traj, '')
-        files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path)
-        poses_mat44 = pos_quats2SE_matrices(poses_quad)
-        traceSquence(sce, lv, traj)
-    print('----------')
+sce = 'hospital'
+
+# for lv in levels:
+#     trajs = db[sce][lv]
+#     for traj in trajs:
+#         path = os.path.join(rootDIR, sce, lv, traj, '')
+#         files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path)
+#         poses_mat44 = pos_quats2SE_matrices(poses_quad)
+#         traceSquence(sce, lv, traj)
+#     print('----------')
+
+lv = 'Hard'
+trajs = db[sce][lv]
+for traj in trajs:
+    path = os.path.join(rootDIR, sce, lv, traj, '')
+    # save_dir = os.path.join(rootDIR, '..', 'TartanAir_Bag', sce, lv, traj, '')
+    files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path, skip=5)
+    poses_mat44 = pos_quats2SE_matrices(poses_quad)
+    traceSquence(sce, lv, traj)
+print('----------')
