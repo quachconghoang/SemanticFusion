@@ -24,6 +24,7 @@ from SlamUtils.Loader.TartanAir import rootDIR, getDataSequences, reload_with_MS
 from Semantics.utils import camExtr, camIntr, getPoint3D
 
 import pandas as pd
+import time
 
 K = Cal3_S2(320, 320, 0.0, 320, 240)
 inv_camExtr = np.linalg.inv(camExtr) # Cam to World
@@ -104,8 +105,8 @@ def getMatchPrecision(src_id, tar_id):
     kp0_gt, kp0_valid = getPointsProject2D(pts_2d=pts0['pts'], pts_3d=source['point3D'], target_cam=target_cam)
 
     if(  (len(kp0_gt)<5) | (kp0_valid.count(True)<10) | (len(kp0)<10) |(len(kp1)<10) ) :
-        # print('Impossible match')
-        return 0, 0, 0
+        print('Impossible match')
+        # return 0, 0, 0
 
     cam_target_predicted = PinholeCameraCal3_S2(Pose3(motion), K)
 
@@ -118,6 +119,8 @@ def getMatchPrecision(src_id, tar_id):
         kp0_expect.append(pt2d)
     kp0_expect = np.asarray(kp0_expect)
 
+
+
     # gen distance-table
     map = np.zeros(shape=[kp0.shape[0], kp1.shape[0]])
     std = 64
@@ -125,6 +128,7 @@ def getMatchPrecision(src_id, tar_id):
         for j, p1 in enumerate(kp1):
             map[i, j] = np.sqrt(np.linalg.norm(p0_e - p1) / std)
 
+    st = time.time()
     ### Get Sinkhorn Map
     a, b = [], []
     for pt_his in norm_self_src:
@@ -138,6 +142,10 @@ def getMatchPrecision(src_id, tar_id):
     match_id = linear_sum_assignment(cost_matrix = (1-Gs)+map)
     match_score = norm_cross[match_id]
     matches = np.stack((match_id[0], match_id[1], match_score), axis=1)
+
+    et = time.time()
+    # print(kp0.shape[0] + kp1.shape[0])
+    print('time = \t', et-st )
 
     # Motion check ...
     motion = Pose3(motion)
@@ -173,40 +181,37 @@ def traceSquence(sce,lvl,traj):
     print(print_name, '%6f' % p4[p4 != 0].mean(), '%6f' % r4[r4 != 0].mean(), '%6f' % f4[f4 != 0].mean())
 
 
-keys = db['keys']
-levels = db['levels']
-sce = 'abandonedfactory'
-for lv in levels:
-    trajs = db[sce][lv]
-    for traj in trajs:
-        path = os.path.join(rootDIR, sce, lv, traj, '')
-        save_dir = os.path.join(rootDIR, '..', 'TartanAir_Bag', sce, lv, traj, '')
-        files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path)
-        poses_mat44 = pos_quats2SE_matrices(poses_quad)
-        if os.path.exists(os.path.join(save_dir, 'pose_est.txt')) == False:
-            continue  # SKIP ...
-
-        pose_est_mat44, pose_gt_mat44, \
-        files_rgb_left, files_rgb_right, \
-        files_depth_left = reload_with_MSCKF_Estimation(files_rgb_left, files_rgb_right, \
-                                                        files_depth_left, save_dir=save_dir)
-        traceSquence(sce, lv, traj)
-    print('----------')
-
-
+# keys = db['keys']
+# levels = db['levels']
 # sce = 'abandonedfactory'
-# lv = 'Hard'
-# trajs = db[sce][lv]
-# for traj in trajs:
-#     path = os.path.join(rootDIR, sce, lv, traj, '')
-#     save_dir = os.path.join(rootDIR, '..', 'TartanAir_Bag', sce, lv, traj, '')
-#     files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path)
-#     poses_mat44 = pos_quats2SE_matrices(poses_quad)
-#     if os.path.exists(os.path.join(save_dir, 'pose_est.txt')) == False:
-#         continue  # SKIP ...
+# for lv in levels:
+#     trajs = db[sce][lv]
+#     for traj in trajs:
+#         path = os.path.join(rootDIR, sce, lv, traj, '')
+#         save_dir = os.path.join(rootDIR, '..', 'TartanAir_Bag', sce, lv, traj, '')
+#         files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path)
+#         poses_mat44 = pos_quats2SE_matrices(poses_quad)
+#         if os.path.exists(os.path.join(save_dir, 'pose_est.txt')) == False:
+#             continue  # SKIP ...
 #
-#     pose_est_mat44, pose_gt_mat44, \
-#     files_rgb_left, files_rgb_right, \
-#     files_depth_left = reload_with_MSCKF_Estimation(files_rgb_left, files_rgb_right, \
-#                                                     files_depth_left, save_dir=save_dir)
-#     traceSquence(sce, lv, traj)
+#         pose_est_mat44, pose_gt_mat44, \
+#         files_rgb_left, files_rgb_right, \
+#         files_depth_left = reload_with_MSCKF_Estimation(files_rgb_left, files_rgb_right, \
+#                                                         files_depth_left, save_dir=save_dir)
+#         traceSquence(sce, lv, traj)
+#     print('----------')
+
+
+sce = 'office'
+lv = 'Hard'
+traj = 'P004'
+path = os.path.join(rootDIR, sce, lv, traj, '')
+save_dir = os.path.join(rootDIR, '..', 'TartanAir_Bag', sce, lv, traj, '')
+files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path)
+poses_mat44 = pos_quats2SE_matrices(poses_quad)
+
+pose_est_mat44, pose_gt_mat44, \
+files_rgb_left, files_rgb_right, \
+files_depth_left = reload_with_MSCKF_Estimation(files_rgb_left, files_rgb_right, \
+                                                    files_depth_left, save_dir=save_dir)
+traceSquence(sce, lv, traj)

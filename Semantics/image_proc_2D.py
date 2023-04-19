@@ -85,9 +85,6 @@ def getSuperPoints_v2(src_gray):
         'desc': desc
     }
 
-def getSuperPoints_v3(src_gray, scale = 1):
-    ...
-
 def hungarianMatch(norm_cross, sorted=False):
     match_id = linear_sum_assignment(cost_matrix = norm_cross)
     match_score = norm_cross[match_id]

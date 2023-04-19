@@ -20,6 +20,7 @@ from SlamUtils.Loader.TartanAir import rootDIR, getDataSequences, getDataLists, 
 from Semantics.utils import camExtr, camIntr, getPoint3D
 
 import pandas as pd
+import time
 
 K = Cal3_S2(320, 320, 0.0, 320, 240)
 files_rgb_left, files_rgb_right, files_depth_left, poses_quad, poses_mat44 = [], [], [], [], []
@@ -60,12 +61,22 @@ def getMatchPrecision(source_id,target_id):
     last_frame = src_gray
 
     # FRAME 1
-    frame_tensor = frame2tensor(tar_gray, dnn_device)
-    pred = matching({**last_data, 'image1': frame_tensor})
+    frame_tensor_tar = frame2tensor(tar_gray, dnn_device)
+    current_data = matching.superpoint({'image': frame_tensor_tar})
+    current_data = {k+'1': current_data[k] for k in keys}
+    current_data['image1'] = frame_tensor_tar
+
+    st = time.time()
+    pred = matching({**last_data, **current_data})
+    et = time.time()
+    # print('time = \t', et - st)
+
     kpts0 = last_data['keypoints0'][0].cpu().numpy()
-    kpts1 = pred['keypoints1'][0].cpu().numpy()
+    kpts1 = current_data['keypoints1'][0].cpu().numpy()
     matches = pred['matches0'][0].cpu().numpy()
-    confidence = pred['matching_scores0'][0].cpu().numpy()
+    # confidence = pred['matching_scores0'][0].cpu().numpy()
+    # print('Match Execution time:', delta_time, 'seconds')
+    print(kpts0.shape[0]+kpts1.shape[0])
 
     kpt0_gt = []
     kpt0_valid = []
@@ -147,20 +158,20 @@ def traceSquence(sce,lvl,traj):
 
     ...
 
-keys = db['keys']
-levels = db['levels']
-est_rs = {}
-names = []
-f1 = []
-for sce in keys:
-    for lv in levels:
-        trajs = db[sce][lv]
-        for traj in trajs:
-            path = os.path.join(rootDIR, sce, lv, traj, '')
-            files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path, skip=5)
-            poses_mat44 = pos_quats2SE_matrices(poses_quad)
-            traceSquence(sce,lv,traj)
-    print('----------')
+# keys = db['keys']
+# levels = db['levels']
+# est_rs = {}
+# names = []
+# f1 = []
+# for sce in keys:
+#     for lv in levels:
+#         trajs = db[sce][lv]
+#         for traj in trajs:
+#             path = os.path.join(rootDIR, sce, lv, traj, '')
+#             files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path, skip=5)
+#             poses_mat44 = pos_quats2SE_matrices(poses_quad)
+#             traceSquence(sce,lv,traj)
+#     print('----------')
 
 # for traj in db['office']['Hard']:
 #     path = os.path.join(rootDIR,'office','Hard', traj, '')
@@ -187,3 +198,31 @@ for sce in keys:
 #     print(path)
 #     print('Match 20-step:',  '%6f' % p4[p4 != 0].mean(), '%6f' % r4[r4 != 0].mean(), '%6f' % f4[f4 != 0].mean())
 #
+
+
+path = os.path.join(rootDIR,'carwelding','Hard', 'P002', '')
+files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path, skip=5)
+poses_mat44 = pos_quats2SE_matrices(poses_quad)
+
+step = 2
+src_id = 0
+last_id = len(files_rgb_left)
+
+total_rs = []
+time_arr = []
+
+while (src_id + 4) < last_id:
+    p4, r4, f4 = getMatchPrecision(src_id, src_id + 4)
+
+    rs = [p4, r4, f4]
+    total_rs.append(rs)
+    src_id += step
+
+rs_np = np.asarray(total_rs)
+p4 = rs_np[:, 0]
+r4 = rs_np[:, 1]
+f4 = rs_np[:, 2]
+
+
+print(path)
+print('Match 20-step:',  '%6f' % p4[p4 != 0].mean(), '%6f' % r4[r4 != 0].mean(), '%6f' % f4[f4 != 0].mean())
