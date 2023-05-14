@@ -23,7 +23,7 @@ from SlamUtils.Loader.TartanAir import rootDIR, getDataSequences, reload_with_MS
 
 from Semantics.utils import camExtr, camIntr, getPoint3D
 
-import pandas as pd
+import time
 
 K = Cal3_S2(320, 320, 0.0, 320, 240)
 inv_camExtr = np.linalg.inv(camExtr) # Cam to World
@@ -114,12 +114,14 @@ def getMatchPrecision_Anchor(src_id, tar_id):
         # print('Impossible match')
         return 0, 0, 0
 
+    st = time.time()
     # Cross check = BAD -> Sinkhorn CROSS CHECK
     matches, Gs = getAnchorPoints(norm_cross, his_src, his_tar, sorting=True)
     if(matches.shape[0] < 5):
-        # print('Anchoring number too small = ',matches.shape[0])
+        print('Anchoring number too small = ',matches.shape[0])
         return 0,0,0
     # evalScores(pts0, pts1, matches, kpt0_gt, kpt0_valid, thresh=.9)
+
     anchor_src_id = matches.T[0].astype(int)
     anchor_tar_id = matches.T[1].astype(int)
 
@@ -133,10 +135,13 @@ def getMatchPrecision_Anchor(src_id, tar_id):
                                    cameraMatrix=camIntr.intrinsic_matrix, distCoeffs=None)
 
     if(s == False):
-        # print('Anchoring failed !!!')
+        print('Anchoring failed !!!')
         return 0,0,0
 
     kp0_expected, jacobian = cv.projectPoints(kp0_3d, r, t, camIntr.intrinsic_matrix, dist_coeffs)
+
+    et = time.time()
+    stage_1 = et - st
 
     map = np.zeros(shape=[kp0.shape[0], kp1.shape[0]])
     std = 64
@@ -144,9 +149,16 @@ def getMatchPrecision_Anchor(src_id, tar_id):
         for j, p1 in enumerate(kp1):
             map[i, j] = np.sqrt(np.linalg.norm(p0_e - p1) / std)
 
+    st = time.time()
+
     match_id = linear_sum_assignment(cost_matrix=(1 - Gs) + map)
     match_score = norm_cross[match_id]
     matches = np.stack((match_id[0], match_id[1], match_score), axis=1)
+
+    et = time.time()
+    stage_2 = et - st
+    # print(kp0.shape[0] + kp1.shape[0])
+    print('time = \t', stage_2 + stage_1, stage_1, stage_2)
     return evalScores(pts0, pts1, matches, kpt0_gt, kpt0_valid, thresh=1.2)
 
 def traceSquence(sce,lvl,traj):
@@ -188,12 +200,21 @@ sce = 'hospital'
 #         traceSquence(sce, lv, traj)
 #     print('----------')
 
+# lv = 'Hard'
+# trajs = db[sce][lv]
+# for traj in trajs:
+#     path = os.path.join(rootDIR, sce, lv, traj, '')
+#     # save_dir = os.path.join(rootDIR, '..', 'TartanAir_Bag', sce, lv, traj, '')
+#     files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path, skip=5)
+#     poses_mat44 = pos_quats2SE_matrices(poses_quad)
+#     traceSquence(sce, lv, traj)
+# print('----------')
+
+
+sce = 'carwelding'
 lv = 'Hard'
-trajs = db[sce][lv]
-for traj in trajs:
-    path = os.path.join(rootDIR, sce, lv, traj, '')
-    # save_dir = os.path.join(rootDIR, '..', 'TartanAir_Bag', sce, lv, traj, '')
-    files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path, skip=5)
-    poses_mat44 = pos_quats2SE_matrices(poses_quad)
-    traceSquence(sce, lv, traj)
-print('----------')
+traj = 'P002'
+path = os.path.join(rootDIR, sce, lv, traj, '')
+files_rgb_left, files_rgb_right, files_depth_left, poses_quad = getDataLists(dir=path, skip=5)
+poses_mat44 = pos_quats2SE_matrices(poses_quad)
+traceSquence(sce, lv, traj)
