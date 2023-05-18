@@ -6,11 +6,11 @@ import torch
 import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
 
-from lib.test_utils import refine_focal, refine_shift
-from lib.multi_depth_model_woauxi import RelDepthModel
-from lib.net_tools import load_ckpt
-from lib.spvcnn_classsification import SPVCNN_CLASSIFICATION
-from lib.test_utils import reconstruct_depth
+from LeRes.test_utils import refine_focal, refine_shift
+from LeRes.multi_depth_model_woauxi import RelDepthModel
+from LeRes.net_tools import load_ckpt
+from LeRes.spvcnn_classsification import SPVCNN_CLASSIFICATION
+from LeRes.test_utils import reconstruct_depth
 
 def parse_args():
     parser = argparse.ArgumentParser(
