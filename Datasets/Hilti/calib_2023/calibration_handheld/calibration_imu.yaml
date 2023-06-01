@@ -1,0 +1,14 @@
+imu0:
+  T_here_imu0:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 0.0]
+  - [0.0, 0.0, 0.0, 1.0]
+  accelerometer_noise_density: 0.0001688956233495657
+  accelerometer_random_walk: 9.782812831313576e-07
+  gyroscope_noise_density: 0.0010679343003532472
+  gyroscope_random_walk: 2.6541629581345176e-05
+  model: calibrated
+  rostopic: /alphasense/imu
+  timeshift_to_imu0: 0.0
+  update_rate: 40000.0
