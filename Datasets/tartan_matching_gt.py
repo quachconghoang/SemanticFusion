@@ -164,8 +164,3 @@ for s, sc in zip(segments.astype(np.int32), scores):
 
 plt.imshow(img_prev_line);plt.show()
 plt.imshow(img_match);plt.show()
-
-# TODO:
-#  - Fix bugs with wrong depth pixel - wrong depth => Line-encoding methods
-#  - Solution Gen 3D lines -> Line models -> RANSAC -> Real 3D Lines points
-#  - Bug Test: Steps = 5, id_0 = 28; id_1=32

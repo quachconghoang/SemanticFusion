@@ -91,7 +91,7 @@ vis.add_geometry(pcd)
 viewControl = vis.get_view_control()
 vis.poll_events();vis.update_renderer()
 
-for id in range(680):
+for id in range(t_lidar.shape[0]):
     msg_lidar = getLidar(tSec=t_lidar[id])
     points = ros_numpy.point_cloud2.pointcloud2_to_xyz_array(msg_lidar, remove_nans=False)
     pcd.points = o3d.utility.Vector3dVector(points)
