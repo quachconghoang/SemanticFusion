@@ -11,12 +11,16 @@ import datetime
 
 from SlamUtils.transformation import pos_quats2SEs, pos_quats2SE_matrices, pose2motion, SEs2ses, line2mat, tartan2kitti
 from config import TartanAir_rootDIRS, TartanAir_scenarios, TartanAir_levels
-
+#NED
 tartan_camExtr = np.array([[0, 1, 0, 0],
                             [0, 0, 1, 0],
                             [1, 0, 0, 0],
-                            [0, 0, 0, 1]], dtype=np.float32)
-
+                            [0, 0, 0, 1]], dtype=np.float64)
+#ENU
+ros_camExtr = np.array([[0, -1, 0, 0],
+                    [0, 0, -1, 0],
+                    [1, 0, 0, 0],
+                    [0, 0, 0, 1]], dtype=np.float64)
 
 def getRootDir():
     for dir in TartanAir_rootDIRS:

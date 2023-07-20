@@ -12,7 +12,7 @@ sys.path.append('../')
 from SlamUtils.transformation import pos_quats2SEs, pos_quats2SE_matrices, pose2motion, SEs2ses, line2mat, tartan2kitti
 from SlamUtils.visualization import getVisualizationBB, getKeyframe
 from SlamUtils.utils import dataset_intrinsics
-from SlamUtils.Loader.TartanAir import getRootDir, getDataSequences, getDataLists, tartan_camExtr
+from SlamUtils.Loader.TartanAir import getRootDir, getDataSequences, getDataLists, tartan_camExtr, ros_camExtr
 
 from open3d import camera
 from open3d.cuda.pybind.geometry import RGBDImage,PointCloud
@@ -31,6 +31,14 @@ path = getDataSequences(root=rootDIR, scenario='office', level='Easy', seq_num=4
 # path = getDataSequences(root=rootDIR, scenario='seasidetown', level='Easy', seq_num=0)
 files_rgb_left, files_rgb_right, files_depth_left, poselist = getDataLists(dir=path, skip=5)
 
+# NED to ROS ENU:
+# body-fixed NED → ROS ENU: (x y z)→(x -y -z) or (w x y z)→(x -y -z w)
+# local NED → ROS ENU: (x y z)→(y x -z) or (w x y z)→(y x -z w)
+
+
+poselist_ENU = np.array([quads_NED_to_ENU(q) for q in poselist])
+
+
 # path = getDataSequences(root=rootDIR, scenario='office', level='Easy', seq_num=0)
 # _rgb_left, _rgb_right, _depth_left, _poselist = getDataLists(dir=path, skip=5)
 # files_rgb_left.extend(_rgb_left)
@@ -41,8 +49,9 @@ files_rgb_left, files_rgb_right, files_depth_left, poselist = getDataLists(dir=p
 focalx, focaly, centerx, centery = dataset_intrinsics(dataset='tartanair')
 
 poses_mat34 = pos_quats2SEs(poselist)  # [R|t - array 12]
-poses_mat34_kitty, poses_mat44_kitty = tartan2kitti(poselist)
+# poses_mat34_kitty, poses_mat44_kitty = tartan2kitti(poselist)
 poses_mat44 = pos_quats2SE_matrices(poselist)
+poses_mat44_ENU = pos_quats2SE_matrices(poselist_ENU)
 motions_mat = pose2motion(poses_mat34)  # [R|t]
 motions_quat = SEs2ses(motions_mat).astype(np.float32)  # x-y-z qx-qy-qz-qw
 
@@ -94,10 +103,10 @@ vis.poll_events();vis.update_renderer()
 
 for id in range(len(files_rgb_left)):
     print(id, blob3D.points.__len__())
-    pose = poselist[id]
+    # pose = poselist[id]
     img_color = io.imread(files_rgb_left[id])
     img_depth = np.load(files_depth_left[id])
-    img_trans = poses_mat44[id]
+    img_trans = poses_mat44_ENU[id]
     img_rgbd = RGBDImage.create_from_color_and_depth(
         color=o3d.geometry.Image(img_color),
         depth=o3d.geometry.Image(img_depth),
@@ -105,7 +114,7 @@ for id in range(len(files_rgb_left)):
         convert_rgb_to_intensity=False)
     img_cloud = PointCloud.create_from_rgbd_image(image=img_rgbd,
                                                   intrinsic=cameraIntrinsic,
-                                                  extrinsic=tartan_camExtr)
+                                                  extrinsic=ros_camExtr)
     img_cloud.transform(img_trans)
 
     # Filtering: Sobel & Depth
@@ -138,4 +147,4 @@ for id in range(len(files_rgb_left)):
 vis.poll_events();vis.update_renderer();vis.run()
 vis.destroy_window()
 
-o3d.io.write_point_cloud("cloud.ply", global_pcd, write_ascii=True, compressed=False, print_progress=True)
+# o3d.io.write_point_cloud("cloud.ply", global_pcd, write_ascii=True, compressed=False, print_progress=True)

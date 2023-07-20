@@ -196,3 +196,7 @@ def tartan2kitti(traj):
         SEs.append(ttt)
 
     return np.array(new_traj), SEs
+
+def quads_NED_to_ENU(q):
+    qENU = np.array([q[0], -q[1], -q[2], q[3], -q[4], -q[5], q[6]])
+    return qENU
