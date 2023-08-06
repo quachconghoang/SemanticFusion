@@ -22,6 +22,7 @@ mav_gt_file = '/home/hoangqc/Datasets/AGZ/Log Files/GroundTruthAGL.csv'
 
 def get_transforms_mat44(xyz, wpk):
     # Because the MAV's coordinate system is different from the camera's (From Z up to Y up, and same X axis)
+    ### WARNING ###: This is not the correct way to transform the coordinate system (Check XYZ - by author or ZYX - my check)
     rotations = R.from_euler('xzy', wpk, degrees=True).as_matrix()
     transforms_mat44 = np.zeros((len(rotations), 4, 4))
     for i in range(len(rotations)):
