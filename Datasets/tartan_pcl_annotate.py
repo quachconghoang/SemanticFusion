@@ -3,6 +3,7 @@ import numpy as np
 import math
 import cv2 as cv
 from skspatial.objects import Line, Plane
+import json
 
 dirpath = '/home/hoangqc/Datasets/TartanAir/office/'
 
@@ -11,9 +12,26 @@ dirpath = '/home/hoangqc/Datasets/TartanAir/office/'
 # o3d.io.write_point_cloud(dirpath + 'office_glob_1cm_ENU_normals.ply', pcl_glob, write_ascii=True, compressed=True, print_progress=True)
 # point_normals = o3d.io.read_point_cloud(dirpath + 'office_glob_1cm_ENU_normals.ply')
 
-pcl_room = o3d.io.read_point_cloud(dirpath + 'office_room.ply')
-axis_pcd = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1.0, origin=[0, 0, 0])
+pcl_room = o3d.io.read_point_cloud(dirpath + 'office_roof.ply')
+# axis_pcd = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1.0, origin=[0, 0, 0])
 point_list = []
+dumb_json = []
+with open('annotate.json', 'r') as f:
+    dumb_json = json.load(f)
+
+for pcl in dumb_json:
+    point_list.append(np.asarray(pcl))
+
+cloud = o3d.geometry.PointCloud()
+for p in point_list:
+    tmp_cloud = o3d.geometry.PointCloud()
+    tmp_cloud.points = o3d.utility.Vector3dVector(p)
+    clr = np.zeros((p.shape[0], 3))
+    clr[:, 0] = 255
+    tmp_cloud.colors = o3d.utility.Vector3dVector(clr)
+    cloud += tmp_cloud
+
+o3d.visualization.draw_geometries([pcl_room, cloud])
 
 def pick_points(pcl):
     vis = o3d.visualization.VisualizerWithVertexSelection()
